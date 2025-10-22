@@ -1,8 +1,212 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
-	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-	 version="6.0">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee 
+         https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>Leave Management System</display-name>
+    <description>Employee Leave Request Management System</description>
+
+    <!-- ========================================= -->
+    <!-- WELCOME FILES -->
+    <!-- ========================================= -->
+    <welcome-file-list>
+        <welcome-file>login.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- ========================================= -->
+    <!-- SESSION CONFIGURATION -->
+    <!-- ========================================= -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>false</secure> <!-- Set true in production with HTTPS -->
+        </cookie-config>
+    </session-config>
+
+    <!-- ========================================= -->
+    <!-- FILTERS -->
+    <!-- ========================================= -->
+
+    <!-- Encoding Filter - UTF-8 for all requests -->
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>com.leavemgmt.filter.EncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Security Filter - Security headers -->
+    <filter>
+        <filter-name>SecurityFilter</filter-name>
+        <filter-class>com.leavemgmt.filter.SecurityFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SecurityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Authentication Filter - Check login for protected pages -->
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>com.leavemgmt.filter.AuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/home</url-pattern>
+        <url-pattern>/request/*</url-pattern>
+        <url-pattern>/agenda/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Role Filter for Approval (Team Leader, Division Leader) -->
+    <filter>
+        <filter-name>ApprovalRoleFilter</filter-name>
+        <filter-class>com.leavemgmt.filter.RoleFilter</filter-class>
+        <init-param>
+            <param-name>allowedRoles</param-name>
+            <param-value>Trưởng nhóm,Trưởng phòng,Giám đốc</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>ApprovalRoleFilter</filter-name>
+        <url-pattern>/request/review</url-pattern>
+    </filter-mapping>
+
+    <!-- Role Filter for Agenda (Division Leader only) -->
+    <filter>
+        <filter-name>AgendaRoleFilter</filter-name>
+        <filter-class>com.leavemgmt.filter.RoleFilter</filter-class>
+        <init-param>
+            <param-name>allowedRoles</param-name>
+            <param-value>Trưởng phòng,Giám đốc</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>AgendaRoleFilter</filter-name>
+        <url-pattern>/agenda/*</url-pattern>
+    </filter-mapping>
+
+    <!-- ========================================= -->
+    <!-- SERVLETS -->
+    <!-- ========================================= -->
+
+    <!-- Login Servlet -->
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.leavemgmt.servlet.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+
+    <!-- Logout Servlet -->
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>com.leavemgmt.servlet.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
+    <!-- Home/Dashboard Servlet -->
+    <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <servlet-class>com.leavemgmt.servlet.HomeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+
+    <!-- Create Leave Request Servlet -->
+    <servlet>
+        <servlet-name>CreateRequestServlet</servlet-name>
+        <servlet-class>com.leavemgmt.servlet.CreateRequestServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateRequestServlet</servlet-name>
+        <url-pattern>/request/create</url-pattern>
+    </servlet-mapping>
+
+    <!-- View Requests Servlet -->
+    <servlet>
+        <servlet-name>ViewRequestsServlet</servlet-name>
+        <servlet-class>com.leavemgmt.servlet.ViewRequestsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewRequestsServlet</servlet-name>
+        <url-pattern>/request/list</url-pattern>
+    </servlet-mapping>
+
+    <!-- Approval Servlet -->
+    <servlet>
+        <servlet-name>ApprovalServlet</servlet-name>
+        <servlet-class>com.leavemgmt.servlet.ApprovalServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ApprovalServlet</servlet-name>
+        <url-pattern>/request/review</url-pattern>
+    </servlet-mapping>
+
+    <!-- Cancel Request Servlet -->
+    <servlet>
+        <servlet-name>CancelRequestServlet</servlet-name>
+        <servlet-class>com.leavemgmt.servlet.CancelRequestServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CancelRequestServlet</servlet-name>
+        <url-pattern>/request/cancel</url-pattern>
+    </servlet-mapping>
+
+    <!-- Agenda Servlet -->
+    <servlet>
+        <servlet-name>AgendaServlet</servlet-name>
+        <servlet-class>com.leavemgmt.servlet.AgendaServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AgendaServlet</servlet-name>
+        <url-pattern>/agenda/view</url-pattern>
+    </servlet-mapping>
+
+    <!-- ========================================= -->
+    <!-- ERROR PAGES -->
+    <!-- ========================================= -->
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>403</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+
+    <!-- ========================================= -->
+    <!-- MIME MAPPINGS -->
+    <!-- ========================================= -->
+    <mime-mapping>
+        <extension>css</extension>
+        <mime-type>text/css</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>js</extension>
+        <mime-type>application/javascript</mime-type>
+    </mime-mapping>
 
 </web-app>
