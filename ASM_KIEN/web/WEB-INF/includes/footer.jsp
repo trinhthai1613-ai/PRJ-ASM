@@ -1,17 +1,11 @@
-<%-- 
-    Document   : footer
-    Created on : Oct 22, 2025, 2:49:56 PM
-    Author     : hp
---%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 Leave Management System. All rights reserved.</p>
+            <p>Powered by JSP + Servlet + JDBC</p>
+        </div>
+    </footer>
+    
+    <script src="<%= request.getContextPath() %>/js/main.js"></script>
+</body>
 </html>
